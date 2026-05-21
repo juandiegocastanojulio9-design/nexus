@@ -2,8 +2,6 @@
 
 > La plataforma de conexiones que va más allá del físico. Encuentra personas que comparten tu mundo, tu esencia y tu visión de vida.
 
-🌐 **Demo en vivo:** [https://martinezzuluaga0324-maker.github.io/Nexus-web/](https://martinezzuluaga0324-maker.github.io/Nexus-web/)
-
 ---
 
 ## 📖 Descripción
