@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus — Conecta de verdad</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+<!-- ══ LOADER ══ -->
+<div id="loader" class="loader">
+    <div class="loader-content">
+        <div class="wave-loader">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+        <p>Cargando Nexus...</p>
+    </div>
+</div>
+
+<!-- ══ PARTÍCULAS ══ -->
+<div class="particles-bg" id="particlesBg"></div>
+
+<!-- ══ NAVBAR ══ -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <div class="nav-logo" onclick="showSection('home')">
+            <div class="logo-icon"><i class="fas fa-heart"></i></div>
+            <span>nexus</span>
+        </div>
+        <div class="nav-menu" id="navMenu">
+            <a href="#" class="nav-link active" data-section="home" onclick="showSection('home')">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+            <a href="#" class="nav-link" data-section="explore" onclick="showSection('explore')">
+                <i class="fas fa-compass"></i> Explorar
+            </a>
+            <a href="#" class="nav-link" data-section="matches" onclick="showSection('matches')">
+                <i class="fas fa-heart"></i> Matches
+            </a>
+            <a href="#" class="nav-link" data-section="stats" onclick="showSection('stats')">
+                <i class="fas fa-chart-bar"></i> Stats
+            </a>
+            <a href="#" class="nav-link" data-section="about" onclick="showSection('about')">
+                <i class="fas fa-info-circle"></i> Acerca de
+            </a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-login" id="btnLogin" onclick="openModal('loginModal')">
+                <i class="fas fa-sign-in-alt"></i> Entrar
+            </button>
+            <button class="btn-user-menu" id="btnUserMenu" style="display:none" onclick="toggleUserDropdown()">
+                <div class="user-avatar" id="userAvatarNav">U</div>
+                <span id="userNameNav">Usuario</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+                <a href="#" onclick="showSection('profile')"><i class="fas fa-user"></i> Mi Perfil</a>
+                <a href="#" onclick="showSection('mymatches')"><i class="fas fa-heart"></i> Mis Matches</a>
+                <a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Ajustes</a>
+                <a href="#" id="adminLink" style="display:none" onclick="showSection('admin')">
+                    <i class="fas fa-shield-alt"></i> Panel Admin
+                </a>
+                <hr>
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" onclick="toggleNav()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     SECCIONES
+════════════════════════════════════════ -->
+
+<!-- HOME -->
+<section class="section active" id="sectionHome">
+    <div class="hero">
+        <div class="hero-particles" id="heroParticles"></div>
+        <div class="hero-content">
+            <div class="hero-badge animate-fade-down">
+                <i class="fas fa-bolt"></i>
+                Más de 2 millones de conexiones reales
+            </div>
+            <h1 class="hero-title animate-fade-up">
+                Encuentra tu
+                <span class="gradient-text">conexión</span>
+                real
+                <div class="title-decoration"></div>
+            </h1>
+            <p class="hero-subtitle animate-fade-up delay-1">
+                Nexus usa inteligencia de compatibilidad para acercarte a personas que comparten tu esencia. No solo tu código postal — tu mundo.
+            </p>
+            <div class="hero-buttons animate-fade-up delay-2">
+                <button class="btn btn-primary btn-lg" onclick="handleStartMatch()">
+                    <i class="fas fa-heart"></i> Empezar ahora
+                </button>
+                <button class="btn btn-outline btn-lg" onclick="showSection('explore')">
+                    <i class="fas fa-compass"></i> Explorar perfiles
+                </button>
+            </div>
+            <div class="hero-stats animate-fade-up delay-3">
+                <div class="hero-stat" data-tooltip="Usuarios registrados">
+                    <div class="hero-stat-number" id="statUsers">0</div>
+                    <div class="hero-stat-label"><i class="fas fa-users"></i> Usuarios</div>
+                </div>
+                <div class="hero-stat" data-tooltip="Matches esta semana">
+                    <div class="hero-stat-number" id="statMatches">0</div>
+                    <div class="hero-stat-label"><i class="fas fa-heart"></i> Matches</div>
+                </div>
+                <div class="hero-stat" data-tooltip="Países disponibles">
+                    <div class="hero-stat-number" id="statCountries">0</div>
+                    <div class="hero-stat-label"><i class="fas fa-globe"></i> Países</div>
+                </div>
+                <div class="hero-stat" data-tooltip="Relaciones formadas">
+                    <div class="hero-stat-number" id="statCouples">0</div>
+                    <div class="hero-stat-label"><i class="fas fa-ring"></i> Parejas</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual animate-fade-left">
+            <div class="match-scene">
+                <div class="match-circle">
+                    <div class="floating-card">
+                        <div class="fc-avatar">🎸</div>
+                        <div>
+                            <div class="fc-name">Andrés, 29</div>
+                            <div class="fc-meta">📍 Medellín</div>
+                        </div>
+                        <div class="fc-match">94%</div>
+                    </div>
+                    <div class="floating-card">
+                        <div class="fc-avatar">🎨</div>
+                        <div>
+                            <div class="fc-name">Valentina, 25</div>
+                            <div class="fc-meta">📍 Bogotá</div>
+                        </div>
+                        <div class="fc-match">91%</div>
+                    </div>
+                    <div class="floating-card">
+                        <div class="fc-avatar">📚</div>
+                        <div>
+                            <div class="fc-name">Camila, 26</div>
+                            <div class="fc-meta">📍 Cali</div>
+                        </div>
+                        <div class="fc-match">88%</div>
+                    </div>
+                    <div class="heart-float">♥</div>
+                    <div class="heart-float">♥</div>
+                    <div class="heart-float">♥</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features-section">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">Cómo funciona</span>
+                <h2>Simple, directo, real</h2>
+                <p>Sin algoritmos misteriosos. Solo compatibilidad construida sobre lo que realmente importa.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll" style="--delay:0.1s">
+                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Compatibilidad inteligente</h3>
+                    <p>Analizamos más de 80 señales de tus intereses, personalidad y estilo de vida para mostrarte conexiones que realmente tienen sentido.</p>
+                </div>
+                <div class="feature-card animate-on-scroll" style="--delay:0.2s">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>100% privado</h3>
+                    <p>Tu número, tu ubicación exacta y tus datos personales nunca son visibles. Tú decides qué compartes y en qué momento.</p>
+                </div>
+                <div class="feature-card animate-on-scroll" style="--delay:0.3s">
+                    <div class="feature-icon"><i class="fas fa-fire"></i></div>
+                    <h3>Swipe intuitivo</h3>
+                    <p>Explora perfiles con un desliz. Like, Nope o Super Nexus — tan simple como debe ser encontrar a alguien especial.</p>
+                </div>
+                <div class="feature-card animate-on-scroll" style="--delay:0.4s">
+                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                    <h3>Chat sin barreras</h3>
+                    <p>Cuando hay match, empieza la conversación. Herramientas para romper el hielo de forma natural y sin presión.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Perfiles recientes -->
+    <div class="recent-section">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">Perfiles destacados</span>
+                <h2>Conoce a la comunidad</h2>
+                <p>Personas reales buscando conexiones reales, cerca de ti</p>
+            </div>
+            <div class="profiles-preview-grid" id="recentProfilesHome"></div>
+            <div class="text-center mt-4 animate-on-scroll">
+                <button class="btn btn-primary" onclick="showSection('explore')">
+                    Ver todos los perfiles <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EXPLORAR -->
+<section class="section" id="sectionExplore">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Descubrir</span>
+            <h2>Explorar perfiles</h2>
+            <p>Encuentra personas que comparten tu mundo</p>
+        </div>
+        <div class="profiles-toolbar animate-on-scroll">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchProfiles" placeholder="Buscar por nombre, ciudad o interés..." oninput="filterProfiles()">
+            </div>
+            <div class="filter-group">
+                <select id="filterGender" onchange="filterProfiles()">
+                    <option value="">Todos</option>
+                    <option value="hombre">Hombres</option>
+                    <option value="mujer">Mujeres</option>
+                    <option value="no-binario">No binario</option>
+                </select>
+                <select id="filterInterest" onchange="filterProfiles()">
+                    <option value="">Todos los intereses</option>
+                    <option value="musica">Música</option>
+                    <option value="viajes">Viajes</option>
+                    <option value="arte">Arte</option>
+                    <option value="gym">Gym</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="leer">Lectura</option>
+                    <option value="cocina">Cocina</option>
+                    <option value="naturaleza">Naturaleza</option>
+                </select>
+                <select id="filterLooking" onchange="filterProfiles()">
+                    <option value="">Qué buscan</option>
+                    <option value="relacion">Relación seria</option>
+                    <option value="casual">Algo casual</option>
+                    <option value="amistad">Amistad</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="handleNewProfile()">
+                <i class="fas fa-plus"></i> Completar perfil
+            </button>
+        </div>
+        <div class="profiles-grid" id="profilesList"></div>
+    </div>
+</section>
+
+<!-- MATCHES -->
+<section class="section" id="sectionMatches">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Conexiones</span>
+            <h2>Mis Matches</h2>
+            <p>Personas con las que tienes conexión mutua</p>
+        </div>
+        <div class="animate-on-scroll" id="matchesContainer">
+            <div class="empty-state">
+                <i class="fas fa-heart"></i>
+                <h3>Aún no tienes matches</h3>
+                <p>Explora perfiles y da likes para encontrar tu conexión</p>
+                <button class="btn btn-primary" onclick="showSection('explore')" style="margin-top:16px">
+                    <i class="fas fa-compass"></i> Explorar perfiles
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="section" id="sectionStats">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Datos</span>
+            <h2>Estadísticas</h2>
+            <p>Métricas e impacto de la comunidad Nexus</p>
+        </div>
+        <div class="stats-grid animate-on-scroll">
+            <div class="stat-card glass-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalUsersStat">0</h3>
+                    <p>Usuarios activos</p>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalMatchesStat">0</h3>
+                    <p>Matches totales</p>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon"><i class="fas fa-comment"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalMsgStat">0</h3>
+                    <p>Mensajes enviados</p>
+                </div>
+            </div>
+            <div class="stat-card glass-card">
+                <div class="stat-icon"><i class="fas fa-ring"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalCouplesStat">0</h3>
+                    <p>Relaciones formadas</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="animate-on-scroll" style="margin:40px 0">
+            <div style="background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:32px;text-align:center">
+                <h3 style="color:var(--white);margin-bottom:12px;font-family:var(--font-display);letter-spacing:-0.03em">
+                    <i class="fas fa-chart-line" style="margin-right:8px;opacity:0.6"></i>
+                    Impacto de la comunidad
+                </h3>
+                <p style="color:var(--gray-light);margin-bottom:24px">Nexus conecta personas que de verdad se complementan</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:24px;margin-top:24px">
+                    <div>
+                        <div style="font-size:2.5rem;font-weight:700;color:var(--white);font-family:var(--font-display)" id="impactMatch">78%</div>
+                        <div style="color:var(--gray-light);font-size:0.9rem">Tasa de respuesta</div>
+                    </div>
+                    <div>
+                        <div style="font-size:2.5rem;font-weight:700;color:var(--white);font-family:var(--font-display)" id="impactActive">0</div>
+                        <div style="color:var(--gray-light);font-size:0.9rem">Activos hoy</div>
+                    </div>
+                    <div>
+                        <div style="font-size:2.5rem;font-weight:700;color:var(--white);font-family:var(--font-display)" id="impactNew">0</div>
+                        <div style="color:var(--gray-light);font-size:0.9rem">Nuevos esta semana</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid animate-on-scroll">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie"></i> Usuarios por interés</h3>
+                <div id="interestChart"></div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-bar"></i> Qué buscan los usuarios</h3>
+                <div id="lookingChart"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ACERCA DE -->
+<section class="section" id="sectionAbout">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Nexus</span>
+            <h2>Conexiones que importan</h2>
+            <p>La app de citas construida sobre la autenticidad</p>
+        </div>
+        <div class="about-content animate-on-scroll" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3>¿Qué es Nexus?</h3>
+                <p>Nexus es una plataforma de conexiones que va más allá del físico. Creemos que las mejores relaciones nacen de compartir valores, intereses y visión de vida.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Nuestra filosofía</h3>
+                <p style="color:var(--gray-light);font-size:0.9rem;line-height:1.7">No somos una app de entretenimiento. Somos una herramienta para encontrar personas con quienes construir algo real — ya sea amistad, amor o compañía.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Tu privacidad primero</h3>
+                <p style="color:var(--gray-light);font-size:0.9rem;line-height:1.7">Nunca vendemos tus datos. Nunca mostramos tu ubicación exacta. Tu información es tuya y solo tú decides con quién compartirla.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MIS MATCHES (auth) -->
+<section class="section" id="sectionMymatches">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Mi cuenta</span>
+            <h2>Mis conexiones</h2>
+            <p>Tus matches y conversaciones activas</p>
+        </div>
+        <div id="myMatchesList"></div>
+    </div>
+</section>
+
+<!-- PERFIL -->
+<section class="section" id="sectionProfile">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Cuenta</span>
+            <h2>Mi perfil</h2>
+        </div>
+        <div class="profile-page-card animate-on-scroll">
+            <div class="profile-page-header">
+                <div class="profile-page-avatar" id="profileAvatar">U</div>
+                <div class="profile-page-info">
+                    <h3 id="profileName">Usuario</h3>
+                    <p id="profileEmail">email@ejemplo.com</p>
+                    <p id="profileCity" style="font-size:0.85rem;color:var(--gray);margin-top:2px"></p>
+                    <span class="profile-page-badge" id="profileBadge">Miembro</span>
+                </div>
+            </div>
+            <div class="profile-page-stats">
+                <div class="profile-page-stat"><strong id="profileMatches">0</strong><span>Matches</span></div>
+                <div class="profile-page-stat"><strong id="profileLikes">0</strong><span>Likes dados</span></div>
+                <div class="profile-page-stat"><strong id="profileDate">-</strong><span>Miembro desde</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AJUSTES -->
+<section class="section" id="sectionSettings">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Configuración</span>
+            <h2>Ajustes</h2>
+            <p>Personaliza tu experiencia en Nexus</p>
+        </div>
+        <div class="settings-grid animate-on-scroll">
+            <!-- Apariencia -->
+            <div class="settings-section-card">
+                <h3><i class="fas fa-palette"></i> Apariencia</h3>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Modo claro</div>
+                        <div class="setting-desc">Cambia el tema a colores claros</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleLightMode" onchange="toggleTheme(this)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Descubrimiento -->
+            <div class="settings-section-card">
+                <h3><i class="fas fa-compass"></i> Descubrimiento</h3>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Distancia máxima</div>
+                        <div class="setting-desc">Perfiles en un radio de <span id="distVal">50</span> km</div>
+                    </div>
+                    <div class="range-wrap" style="width:160px">
+                        <input type="range" min="1" max="300" value="50" id="distRange" oninput="updateRangeLabel('distRange','distVal','km')">
+                        <span class="range-val" id="distValDisplay">50km</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Rango de edad</div>
+                        <div class="setting-desc">Mostrar entre <span id="ageMinVal">18</span>–<span id="ageMaxVal">40</span> años</div>
+                    </div>
+                </div>
+                <div style="padding: 8px 0; display:flex; flex-direction:column; gap:8px">
+                    <div class="range-wrap">
+                        <span style="font-size:0.78rem;color:var(--gray);min-width:30px">Min</span>
+                        <input type="range" min="18" max="65" value="18" id="ageMinRange" oninput="updateAgeLabel()">
+                        <span class="range-val" id="ageMinDisplay">18</span>
+                    </div>
+                    <div class="range-wrap">
+                        <span style="font-size:0.78rem;color:var(--gray);min-width:30px">Max</span>
+                        <input type="range" min="18" max="65" value="40" id="ageMaxRange" oninput="updateAgeLabel()">
+                        <span class="range-val" id="ageMaxDisplay">40</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Mostrar perfil</div>
+                        <div class="setting-desc">Hacerme visible en Explorar</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleVisible" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Notificaciones -->
+            <div class="settings-section-card">
+                <h3><i class="fas fa-bell"></i> Notificaciones</h3>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Nuevos matches</div>
+                        <div class="setting-desc">Notificar cuando hay match mutuo</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Mensajes nuevos</div>
+                        <div class="setting-desc">Notificar mensajes en el chat</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Emails de Nexus</div>
+                        <div class="setting-desc">Noticias, actualizaciones y tips</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Privacidad -->
+            <div class="settings-section-card">
+                <h3><i class="fas fa-lock"></i> Privacidad</h3>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Modo incógnito</div>
+                        <div class="setting-desc">Solo te ven personas a las que diste like</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Mostrar distancia</div>
+                        <div class="setting-desc">Mostrar km en tu perfil</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Leer confirmación</div>
+                        <div class="setting-desc">Mostrar cuando lees mensajes</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Cuenta -->
+            <div class="settings-section-card">
+                <h3><i class="fas fa-user-cog"></i> Cuenta</h3>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+                    <button class="btn btn-outline" style="width:100%;justify-content:flex-start" onclick="openModal('editProfileModal')">
+                        <i class="fas fa-edit"></i> Editar perfil
+                    </button>
+                    <button class="btn btn-outline" style="width:100%;justify-content:flex-start" onclick="openModal('changePasswordModal')">
+                        <i class="fas fa-key"></i> Cambiar contraseña
+                    </button>
+                    <button class="btn btn-outline" style="width:100%;justify-content:flex-start;color:#f87171;border-color:rgba(239,68,68,0.2)" onclick="confirmAction('¿Eliminar tu cuenta?','Esta acción no se puede deshacer. Perderás todos tus matches y conversaciones.',deleteAccount)">
+                        <i class="fas fa-trash"></i> Eliminar cuenta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ADMIN -->
+<section class="section" id="sectionAdmin">
+    <div class="container page-section">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag"><i class="fas fa-shield-alt"></i> Administrador</span>
+            <h2>Panel de administración</h2>
+            <p>Gestiona usuarios, perfiles y configuración del sistema</p>
+        </div>
+        <div class="admin-tabs animate-on-scroll">
+            <button class="admin-tab active" onclick="switchAdminTab('adminUsers')">
+                <i class="fas fa-users"></i> Usuarios
+            </button>
+            <button class="admin-tab" onclick="switchAdminTab('adminProfiles')">
+                <i class="fas fa-id-card"></i> Perfiles
+            </button>
+            <button class="admin-tab" onclick="switchAdminTab('adminOverview')">
+                <i class="fas fa-chart-pie"></i> Resumen
+            </button>
+        </div>
+
+        <!-- Admin Usuarios -->
+        <div class="admin-panel active" id="adminUsers">
+            <div class="admin-toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="adminSearchUsers" placeholder="Buscar usuarios..." oninput="renderAdminUsers()">
+                </div>
+                <button class="btn btn-outline" onclick="exportUsersCSV()">
+                    <i class="fas fa-download"></i> Exportar CSV
+                </button>
+            </div>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Avatar</th><th>Nombre</th><th>Email</th>
+                            <th>Rol</th><th>Matches</th><th>Registro</th><th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminUsersTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Perfiles -->
+        <div class="admin-panel" id="adminProfiles">
+            <div class="admin-toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="adminSearchProfiles" placeholder="Buscar perfiles..." oninput="renderAdminProfiles()">
+                </div>
+            </div>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th><th>Edad</th><th>Ciudad</th>
+                            <th>Género</th><th>Busca</th><th>Estado</th><th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminProfilesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Admin Resumen -->
+        <div class="admin-panel" id="adminOverview">
+            <div class="admin-overview-grid">
+                <div class="overview-card">
+                    <div class="overview-icon"><i class="fas fa-users"></i></div>
+                    <h3 id="overviewUsers">0</h3><p>Total Usuarios</p>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon"><i class="fas fa-heart"></i></div>
+                    <h3 id="overviewMatches">0</h3><p>Matches</p>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon"><i class="fas fa-user-check"></i></div>
+                    <h3 id="overviewVerified">0</h3><p>Perfiles completos</p>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon"><i class="fas fa-ban"></i></div>
+                    <h3 id="overviewBanned">0</h3><p>Suspendidos</p>
+                </div>
+            </div>
+            <div class="admin-activity">
+                <h3><i class="fas fa-history"></i> Actividad reciente</h3>
+                <div class="activity-list" id="activityList"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     MODALES
+════════════════════════════════════════ -->
+
+<!-- LOGIN -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+        <div class="modal-header">
+            <div class="modal-icon"><i class="fas fa-heart"></i></div>
+            <h2>Bienvenido</h2>
+            <p>Entra a tu cuenta para encontrar tu conexión</p>
+        </div>
+
+        <!-- Google -->
+        <button class="btn btn-outline btn-full" id="googleLoginBtn" style="margin-bottom:16px;gap:12px" onclick="loginWithGoogle()">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            Continuar con Google
+        </button>
+
+        <div class="divider" style="display:flex;align-items:center;gap:12px;color:var(--gray);font-size:0.8rem;margin-bottom:16px">
+            <div style="flex:1;height:1px;background:var(--glass-border)"></div>
+            o
+            <div style="flex:1;height:1px;background:var(--glass-border)"></div>
+        </div>
+
+        <!-- Tabs método -->
+        <div class="method-tabs">
+            <button class="method-tab active" onclick="switchLoginMethod('phone', this)">
+                <i class="fas fa-mobile-alt"></i> Teléfono
+            </button>
+            <button class="method-tab" onclick="switchLoginMethod('email', this)">
+                <i class="fas fa-envelope"></i> Email
+            </button>
+        </div>
+
+        <!-- PHONE -->
+        <div id="loginPhone">
+            <div id="phoneStep1">
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Número de teléfono</label>
+                    <div style="display:flex;gap:8px">
+                        <select id="countryCode" style="width:110px;padding:12px 10px;background:var(--dark);border:1px solid var(--glass-border);border-radius:var(--radius);color:var(--white);font-family:var(--font)">
+                            <option value="+57">🇨🇴 +57</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+52">🇲🇽 +52</option>
+                            <option value="+34">🇪🇸 +34</option>
+                            <option value="+54">🇦🇷 +54</option>
+                            <option value="+56">🇨🇱 +56</option>
+                            <option value="+51">🇵🇪 +51</option>
+                            <option value="+58">🇻🇪 +58</option>
+                            <option value="+44">🇬🇧 +44</option>
+                            <option value="+55">🇧🇷 +55</option>
+                        </select>
+                        <input type="tel" id="phoneInput" placeholder="300 123 4567" style="flex:1" maxlength="15" inputmode="numeric">
+                    </div>
+                    <small style="color:var(--gray);font-size:0.78rem;margin-top:6px;display:block">
+                        Te enviaremos un código SMS de verificación
+                    </small>
+                </div>
+                <div id="recaptcha-container"></div>
+                <button class="btn btn-primary btn-full" id="sendSmsBtn" onclick="sendSMS()">
+                    <i class="fas fa-paper-plane"></i> Enviar código SMS
+                </button>
+            </div>
+            <div id="phoneStep2" style="display:none">
+                <div style="text-align:center;margin-bottom:16px">
+                    <div style="font-weight:600;color:var(--white)">Código enviado a</div>
+                    <div id="phoneSentTo" style="color:var(--gray-light);font-size:0.9rem"></div>
+                </div>
+                <div class="otp-group">
+                    <input class="otp-input" maxlength="1" inputmode="numeric" data-idx="0">
+                    <input class="otp-input" maxlength="1" inputmode="numeric" data-idx="1">
+                    <input class="otp-input" maxlength="1" inputmode="numeric" data-idx="2">
+                    <input class="otp-input" maxlength="1" inputmode="numeric" data-idx="3">
+                    <input class="otp-input" maxlength="1" inputmode="numeric" data-idx="4">
+                    <input class="otp-input" maxlength="1" inputmode="numeric" data-idx="5">
+                </div>
+                <button class="btn btn-primary btn-full" id="verifyOtpBtn" onclick="verifyOTPCode()">
+                    <i class="fas fa-check"></i> Verificar código
+                </button>
+                <div style="text-align:center;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+                    <span id="countdown" style="font-size:0.85rem;color:var(--gray)">Reenviar en 30s</span>
+                    <button id="resendBtn" style="display:none;background:none;border:none;color:var(--white);font-weight:600;font-size:0.85rem;cursor:pointer" onclick="resendSMS()">Reenviar</button>
+                </div>
+                <button class="btn btn-outline btn-full" style="margin-top:10px;font-size:0.875rem" onclick="document.getElementById('phoneStep1').style.display='';document.getElementById('phoneStep2').style.display='none'">
+                    ← Cambiar número
+                </button>
+            </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div id="loginEmail" style="display:none">
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+                <input type="email" id="loginEmailInput" placeholder="tu@correo.com">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Contraseña</label>
+                <div class="password-input">
+                    <input type="password" id="loginPasswordInput" placeholder="Tu contraseña">
+                    <button type="button" class="toggle-password" onclick="togglePassword('loginPasswordInput')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="display:flex;gap:10px">
+                <button class="btn btn-primary" style="flex:1" onclick="loginWithEmail()">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+                <button class="btn btn-outline" style="flex:1" onclick="registerWithEmail()">
+                    <i class="fas fa-user-plus"></i> Registrarse
+                </button>
+            </div>
+            <div style="text-align:right;margin-top:10px">
+                <button onclick="forgotPassword()" style="background:none;border:none;color:var(--gray-light);font-size:0.82rem;cursor:pointer">¿Olvidaste tu contraseña?</button>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <p>Al continuar aceptas los <a href="#">Términos</a> y <a href="#">Política de privacidad</a></p>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);color:var(--gray-light);font-size:0.78rem;text-align:center">
+            <i class="fas fa-info-circle"></i> Demo — Admin: admin@nexus.app / admin123
+        </div>
+    </div>
+</div>
+
+<!-- VER PERFIL -->
+<div class="modal-overlay" id="viewProfileModal">
+    <div class="modal modal-lg">
+        <button class="modal-close" onclick="closeModal('viewProfileModal')">&times;</button>
+        <div id="viewProfileContent"></div>
+    </div>
+</div>
+
+<!-- MATCH MODAL -->
+<div class="modal-overlay" id="matchModal">
+    <div class="modal" style="text-align:center;max-width:400px">
+        <button class="modal-close" onclick="closeModal('matchModal')">&times;</button>
+        <div style="font-size:3rem;margin-bottom:12px;animation:heartPop 0.5s ease">♥</div>
+        <h2 style="font-family:var(--font-display);font-size:2rem;letter-spacing:-0.04em;color:var(--white);margin-bottom:8px">¡Es un Nexo!</h2>
+        <p style="color:var(--gray-light);font-size:0.9rem;margin-bottom:24px">
+            Tú y <strong id="matchedName" style="color:var(--white)">alguien</strong> se gustaron mutuamente
+        </p>
+        <div style="display:flex;justify-content:center;align-items:center;gap:-16px;margin-bottom:24px">
+            <div id="myMatchAv" style="width:80px;height:80px;border-radius:50%;background:var(--dark-3);display:flex;align-items:center;justify-content:center;font-size:2rem;border:3px solid var(--dark-2);z-index:2">😊</div>
+            <div id="theirMatchAv" style="width:80px;height:80px;border-radius:50%;background:var(--dark-3);display:flex;align-items:center;justify-content:center;font-size:2rem;border:3px solid var(--dark-2);margin-left:-16px">🎉</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-primary btn-full" onclick="closeModal('matchModal');showSection('mymatches')">
+                <i class="fas fa-comment"></i> Enviar mensaje
+            </button>
+            <button class="btn btn-outline btn-full" onclick="closeModal('matchModal')">
+                Seguir explorando
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- CONFIRMAR ACCIÓN -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal" style="max-width:420px">
+        <div class="modal-header" style="margin-bottom:20px">
+            <div class="modal-icon"><i class="fas fa-question"></i></div>
+            <h2 id="confirmTitle">Confirmar</h2>
+            <p id="confirmMessage">¿Estás seguro?</p>
+        </div>
+        <div style="display:flex;gap:12px">
+            <button class="btn btn-outline btn-full" onclick="closeModal('confirmModal')">
+                <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button class="btn btn-primary btn-full" id="confirmAction">
+                <i class="fas fa-check"></i> Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SETUP DE PERFIL (primer acceso) -->
+<div class="modal-overlay" id="profileSetupModal">
+    <div class="modal modal-lg">
+        <div style="width:100%;max-width:560px;margin:0 auto">
+            <div class="progress-bar-wrap">
+                <div class="progress-meta">
+                    <span id="setupStepLabel">Paso 1 de 5</span>
+                    <span id="setupStepPct">20%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="setupProgressFill" style="width:20%"></div>
+                </div>
+            </div>
+
+            <!-- Paso 1: nombre y edad -->
+            <div class="setup-step active" id="setupStep1">
+                <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;color:var(--white)">¿Cómo te llamas?</div>
+                <div style="color:var(--gray-light);font-size:0.9rem;margin-bottom:20px">Esto aparecerá en tu perfil</div>
+                <div class="form-group"><label>Nombre</label><input type="text" id="setupName" placeholder="Tu nombre" maxlength="30"></div>
+                <div class="form-group"><label>Fecha de nacimiento</label><input type="date" id="setupBirthdate"></div>
+                <div class="form-group"><label>Ciudad</label><input type="text" id="setupCity" placeholder="ej. Medellín, Colombia"></div>
+                <button class="btn btn-primary btn-full" onclick="setupNext(1)">Continuar →</button>
+            </div>
+
+            <!-- Paso 2: género -->
+            <div class="setup-step" id="setupStep2" style="display:none">
+                <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;color:var(--white)">Cuéntanos más</div>
+                <div style="color:var(--gray-light);font-size:0.9rem;margin-bottom:20px">Esto nos ayuda a mostrarte conexiones relevantes</div>
+                <label class="form-group" style="display:block;margin-bottom:10px;font-weight:600;font-size:0.85rem;color:var(--light)">Soy...</label>
+                <div class="choice-grid" id="genderGrid">
+                    <button class="choice-btn" data-val="hombre"><span class="icon">👨</span>Hombre</button>
+                    <button class="choice-btn" data-val="mujer"><span class="icon">👩</span>Mujer</button>
+                    <button class="choice-btn" data-val="no-binario"><span class="icon">🧑</span>No binario</button>
+                    <button class="choice-btn" data-val="trans-masc"><span class="icon">⚧️</span>Transmasc.</button>
+                    <button class="choice-btn" data-val="trans-fem"><span class="icon">⚧️</span>Transfem.</button>
+                    <button class="choice-btn" data-val="otro"><span class="icon">✨</span>Otro</button>
+                </div>
+                <label style="display:block;margin:8px 0 10px;font-weight:600;font-size:0.85rem;color:var(--light)">Me interesan...</label>
+                <div class="choice-grid" id="showMeGrid" style="grid-template-columns:repeat(3,1fr)">
+                    <button class="choice-btn" data-val="hombres"><span class="icon">👨</span>Hombres</button>
+                    <button class="choice-btn" data-val="mujeres"><span class="icon">👩</span>Mujeres</button>
+                    <button class="choice-btn" data-val="todos"><span class="icon">💜</span>Todos</button>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:16px">
+                    <button class="btn btn-outline" onclick="setupPrev(2)">← Atrás</button>
+                    <button class="btn btn-primary" style="flex:1" onclick="setupNext(2)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- Paso 3: bio e intereses -->
+            <div class="setup-step" id="setupStep3" style="display:none">
+                <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;color:var(--white)">Tu esencia</div>
+                <div style="color:var(--gray-light);font-size:0.9rem;margin-bottom:20px">Una buena bio multiplica tus matches</div>
+                <div class="form-group">
+                    <label>Bio <span style="color:var(--gray)">(máx 300 chars)</span></label>
+                    <textarea id="setupBio" rows="3" placeholder="Cuéntales quién eres..." maxlength="300"></textarea>
+                    <div style="text-align:right;font-size:0.75rem;color:var(--gray);margin-top:4px"><span id="bioCount">0</span>/300</div>
+                </div>
+                <label style="display:block;margin-bottom:10px;font-weight:600;font-size:0.85rem;color:var(--light)">Mis intereses (mín 3)</label>
+                <div class="interests-wrap" id="interestsGrid"></div>
+                <div style="display:flex;gap:10px;margin-top:20px">
+                    <button class="btn btn-outline" onclick="setupPrev(3)">← Atrás</button>
+                    <button class="btn btn-primary" style="flex:1" onclick="setupNext(3)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- Paso 4: fotos -->
+            <div class="setup-step" id="setupStep4" style="display:none">
+                <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;color:var(--white)">Tus mejores fotos</div>
+                <div style="color:var(--gray-light);font-size:0.9rem;margin-bottom:20px">La primera foto es la más importante. Agrega al menos 2.</div>
+                <div class="photos-grid" id="photosGridSetup"></div>
+                <input type="file" id="photoFileInput" accept="image/*" style="display:none">
+                <div style="font-size:0.78rem;color:var(--gray);margin-top:8px">
+                    💡 Fotos con buena luz obtienen 3x más likes
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px">
+                    <button class="btn btn-outline" onclick="setupPrev(4)">← Atrás</button>
+                    <button class="btn btn-primary" style="flex:1" onclick="setupNext(4)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- Paso 5: preferencias -->
+            <div class="setup-step" id="setupStep5" style="display:none">
+                <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px;color:var(--white)">¿Qué buscas?</div>
+                <div style="color:var(--gray-light);font-size:0.9rem;margin-bottom:20px">Ajusta para ver perfiles más relevantes</div>
+                <label style="display:block;margin-bottom:10px;font-weight:600;font-size:0.85rem;color:var(--light)">Busco...</label>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px" id="lookingGrid">
+                    <button class="choice-btn" style="flex-direction:row;justify-content:flex-start;gap:10px" data-val="relacion"><span>💜</span> Relación seria</button>
+                    <button class="choice-btn" style="flex-direction:row;justify-content:flex-start;gap:10px" data-val="casual"><span>✨</span> Algo casual</button>
+                    <button class="choice-btn" style="flex-direction:row;justify-content:flex-start;gap:10px" data-val="amistad"><span>🤝</span> Nuevas amistades</button>
+                    <button class="choice-btn" style="flex-direction:row;justify-content:flex-start;gap:10px" data-val="ver"><span>🔍</span> Aún estoy viendo</button>
+                </div>
+                <div style="display:flex;gap:10px">
+                    <button class="btn btn-outline" onclick="setupPrev(5)">← Atrás</button>
+                    <button class="btn btn-primary" style="flex:1" id="finishSetupBtn" onclick="finishSetup()">
+                        <i class="fas fa-check"></i> Crear mi perfil 🎉
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- FAB -->
+<button class="fab-button" id="fabButton" onclick="handleStartMatch()" title="Explorar perfiles">
+    <i class="fas fa-fire"></i>
+</button>
+
+<!-- FOOTER -->
+<footer class="footer" id="mainFooter">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="nav-logo" style="cursor:default">
+                    <div class="logo-icon"><i class="fas fa-heart"></i></div>
+                    <span>nexus</span>
+                </div>
+                <p>La plataforma de conexiones que va más allá del físico. Encuentra personas que comparten tu mundo, tu esencia y tu visión de vida.</p>
+                <div class="footer-social">
+                    <a href="https://twitter.com" target="_blank" class="social-btn"><i class="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    <a href="https://tiktok.com" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://github.com" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Navegar</h4>
+                <a href="#" onclick="showSection('home')"><i class="fas fa-home" style="width:18px"></i> Inicio</a>
+                <a href="#" onclick="showSection('explore')"><i class="fas fa-compass" style="width:18px"></i> Explorar</a>
+                <a href="#" onclick="showSection('matches')"><i class="fas fa-heart" style="width:18px"></i> Matches</a>
+                <a href="#" onclick="showSection('stats')"><i class="fas fa-chart-bar" style="width:18px"></i> Stats</a>
+                <a href="#" onclick="showSection('about')"><i class="fas fa-info-circle" style="width:18px"></i> Acerca de</a>
+            </div>
+            <div class="footer-links">
+                <h4>Empresa</h4>
+                <a href="#"><i class="fas fa-file-alt" style="width:18px"></i> Términos de servicio</a>
+                <a href="#"><i class="fas fa-shield-alt" style="width:18px"></i> Política de privacidad</a>
+                <a href="#"><i class="fas fa-cookie" style="width:18px"></i> Cookies</a>
+                <a href="#"><i class="fas fa-envelope" style="width:18px"></i> Contacto</a>
+                <a href="#"><i class="fas fa-question-circle" style="width:18px"></i> Ayuda</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Hecho con <i class="fas fa-heart" style="color:#555"></i> para conectar personas reales &nbsp;·&nbsp; © 2025 Nexus App</p>
+        </div>
+    </div>
+</footer>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
